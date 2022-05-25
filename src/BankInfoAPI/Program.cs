@@ -55,8 +55,9 @@ app.MapGet("/currentBalance", (HttpContext context) =>
         }
         return Results.Unauthorized();
     }
-    catch 
+    catch (Exception ex)
     {
+        Console.Write("Access token validation error: {0}", ex.Message);
         return Results.Unauthorized();
     }
 })
@@ -66,7 +67,7 @@ bool IsScopeValid(string scopeName)
 {
     if (ClaimsPrincipal == null)
     {
-        Console.WriteLine($"Claims Principal is null");
+        Console.WriteLine($"Access token validation error: claims principal is null");
         return false;
     }
 
@@ -76,22 +77,21 @@ bool IsScopeValid(string scopeName)
 
     if (string.IsNullOrEmpty(scopeClaim))
     {
-        Console.WriteLine($"Scope is invalid: {scopeName}");
+        Console.WriteLine($"Access token validation error: {scopeName} is invalid");
         return false;
     }
 
     if (!scopeClaim.ToUpper().Split(' ').Contains(scopeName.ToUpper()))
     {
-        Console.WriteLine($"Scope is invalid: {scopeName}");
-        return false;
+        Console.WriteLine($"Access token validation error: {scopeName} is invalid");
     }
-    Console.WriteLine($"Scope is valid: {scopeName}");
+    Console.WriteLine($"Access token scope {scopeName} is valid");
     return true;
 }
 
 string? GetUserName()
 {
-    return ClaimsPrincipal?.Claims.FirstOrDefault(t => t.Type == "preferred_username")?.Value; 
+    return ClaimsPrincipal?.Claims.FirstOrDefault(t => t.Type == "name")?.Value; 
 }
 
 app.Run();

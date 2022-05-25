@@ -8,6 +8,6 @@ namespace BankDesktopClient
 {
     public enum APITypes
     { 
-        BankInfoAPI, MSGraph
+        BankInfoAPI, MSGraph, AzureARM
     }
 }

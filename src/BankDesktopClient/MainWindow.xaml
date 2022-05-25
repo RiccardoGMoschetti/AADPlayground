@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BankDesktopClient" BorderBrush="Beige" 
         mc:Ignorable="d"
         FontSize="12"
-        Title="Azure Active Directory Authentication Samples" Height="900" Width="900" Background="#022B3A" FontFamily="Segoe UI Semilight" >
+        Title="Azure Active Directory Authentication Samples" Height="900" Width="1024" Background="#022B3A" FontFamily="Segoe UI Semilight" >
     <Window.Resources>
         <Style TargetType="{x:Type Label}">
             <Setter Property="Control.Foreground" Value="White"/>
@@ -15,97 +15,58 @@
 
 
     <StackPanel Orientation="Vertical" Margin="0,0,0,0">
-        <Label FontFamily="Segoe UI Semibold" Content="Sample Desktop Client For AAD-protected APIs" HorizontalAlignment="Center" FontSize="14" VerticalAlignment="Center"/>
-        <Label Content="This is a public client made to show how to consume APIs protected by AAD, both by Microsoft (MSGraph) and developed by you (in this case, a sample BankInfo API)."/>
-        <Label>
-            <TextBlock><Run Text="This app does "/><Span FontFamily="Segoe UI Semibold"><Run Text="not"/></Span><Run Text=" use MSAL / ADAL for authentication, so you can see what is going on under the hood."/></TextBlock>
-        </Label>
-        <Label Content="To be able to call APIs, it uses the OAUTH2 authorization code flow with PKCE support (which is the safest way)." Background="{x:Null}"/>
-        <Label>
-            <Label.Content>
-                <AccessText TextWrapping="Wrap" Text="We will get an authorization code for our BankInfo API and one for Microsoft Graph. We will use the Code to get an Access Token (to use the target API) and a Refresh Token (to use when the Access Token expires)."/>
-            </Label.Content>
-        </Label>  
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5 5 5 5">
-            <Button Background="#1F7A8C" Foreground="White" x:Name="GetAuthCodeForBankInfo" Margin="5 5 5 5" Content="Get Authorization Code for Bank Info API" HorizontalAlignment="Left" Click="GetAuthCodeForBankInfoAPI_Click" Width="300"/>
-            <Button Background="#E1E5F2" Foreground="Black" x:Name="GetAuthCodeForMSGraph" Margin="5" Content="Get Authorization Code for MS Graph" HorizontalAlignment="Left" Click="GetAuthCodeForBankInfoAPI_Click" Width="300"/>
-            <Button Background="#BFDBF7" Foreground="Black" x:Name="LogOut" Margin="5" Content="Log Out" Click="LogOut_Click" Width="300"/>
+        <Label FontFamily="Segoe UI Semibold" Content="Sample Desktop Client For AAD-protected APIs" HorizontalAlignment="Center" FontSize="18" VerticalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal"  Margin="5 5 5 5">
+            <Label Content="Tenant ID" FontSize="16" Width="100" />
+            <TextBox x:Name="TenantID" Width="350" Margin="0 0 100 0" Text="e0aeaef9-9bf6-4b6d-bebb-25ee10f820af" FontSize="16"/>
+            <Label Content="Client ID" FontSize="16" Width="100" />
+            <TextBox x:Name="ClientID" Width="350" Text="bc7a21b8-d4d8-449e-bcad-c740e843fa49" FontSize="16"   />
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="5 5 5 5">
-            <WebBrowser Height="200" Width="400" x:Name="AuthBrowser" LoadCompleted ="AuthBrowser_Navigated" Margin="0 0 0 10"  />
-            <StackPanel Orientation="Vertical">
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" >
-                    <Label Margin="10 0 0 0" Content="Auth Code Response for BankInfo API:"  Width="400" HorizontalAlignment="Left"/>
-                    <TextBox Margin="10 0 0 0" x:Name="AuthCodeBankInfo" VerticalAlignment="Center" Width="400" TextWrapping="NoWrap"  Text="..." />
-                    <Button Margin="10 0 0 0" Background="#1F7A8C" Foreground="White" x:Name="CopyAuthCodeBankInfo"  Content="Copy" Click="CopyBankInfoAPIAuthCode_Click" />
-                </StackPanel>
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" >
-                    <Label Margin="10 0 0 0" Content="Auth Code Response for MSGraph API:" Width="400" HorizontalAlignment="Left"/>
-                    <TextBox Margin="10 0 0 0" x:Name="AuthCodeMSGraph" VerticalAlignment="Center" Width="400" TextWrapping="NoWrap"  Text="..." />
-                    <Button x:Name="CopyAuthCodeMSGraph" Background="#1F7A8C" Foreground="White" Margin="10 0 0 0" Content="Copy" Click="CopyMSGraphAPIAuthCode_Click"/>
-                </StackPanel>
+        <StackPanel Orientation="Horizontal"  Margin="5 5 5 5">
+
+            <Label x:Name="label" Content="Choose API" FontSize="16" Width="100" />
+            <ComboBox x:Name="AvailableAPIs" Width="350" FontSize="16" SelectionChanged="AvailableAPIs_SelectionChanged" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5 5 5 5" HorizontalAlignment="Stretch">
+            <Button Background="#1F7A8C" Foreground="White" x:Name="GetAuthCode" Margin="5 5 5 5" Content="1. Get Authorization Code" Click="GetAuthorizationCode_Click" Width="250" Height="35" FontSize="16"/>
+            <WebBrowser Height="200" Width="350" x:Name="AuthBrowser" LoadCompleted ="AuthBrowser_Navigated" Margin="10,0,0,10" />
+            <StackPanel x:Name="AuthCodeResponse" Orientation="Vertical" Width="390" >
+                <Label Margin="10,0,10,0" Content="Authorization Code Response:"  Width="326" Height="25" HorizontalAlignment="Right"/>
+                <TextBox Margin="10,0,10,10" x:Name="AuthCode" Width="326" TextWrapping="NoWrap"  Text="..." Height="50"  HorizontalAlignment="Right" />
+                <Button Margin="10,0,10,10" Background="#E1E5F2" Foreground="Black" x:Name="CopyAuthCode"  Content="Copy" Click="CopyAuthorizationCode_Click" Width="326" Height="25" HorizontalAlignment="Right" />
+                <Button Margin="10,0,10,10" Background="#BFDBF7" Foreground="Black" x:Name="LogOut" Content="Log Out" Click="LogOut_Click" Width="326" Height="25" HorizontalAlignment="Right"/>
             </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5 5 5 5">
-            <Button Background="#1F7A8C" Foreground="White" x:Name="GetTokensForBankInfo" Margin="5 5 5 5" Content="Get Access and Refresh Token for Bank Info API" HorizontalAlignment="Left" Click="GetTokensForBankInfoAPI_Click" Width="300"/>
-            <Button Background="#E1E5F2" Foreground="Black" x:Name="GetTokensForMSGraph" Margin="5" Content="Get Access and Refresh Token for MS Graph" HorizontalAlignment="Left" Click="GetAuthCodeForBankInfoAPI_Click" Width="300"/>
-        </StackPanel>
-        <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" >
-                    <Label Margin="10 0 0 0" Content="Response from BankInfo API token endpoint:"  Width="400" HorizontalAlignment="Left"/>
-                    <TextBox Margin="10 0 0 0" x:Name="BankInfoAPITokenResponse" VerticalAlignment="Center" Width="400" TextWrapping="NoWrap"  Text="..." />
-                    <Button Margin="10 0 0 0" Background="#BFDBF7" x:Name="CopyBankInfoAccessToken"  Content="Copy whole Response to Clipboard" Click="CopyBankInfoAPITokenInfo_Click" />
+
+        <StackPanel Orientation="Horizontal" Margin="5 5 5 5" >
+                <Button Background="#1F7A8C" Foreground="White" x:Name="GetTokens" Margin="5 5 5 5" Content="2. Get Access and Refresh Tokens" Click="GetTokens_Click" Width="250" Height="35" FontSize="16"/>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Height="100"  >
+                   <TextBox Margin="10 0 0 0" x:Name="TokenResponse" VerticalAlignment="Center" Width="350" Height="100" TextWrapping="NoWrap"  Text="" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
-                    <Button Background="#1F7A8C" Foreground="White" Margin="10 0 0 0" x:Name="ShowBankInfoAccessToken"  Click="CopyBankInfoAPIAccessToken_Click" Width="120" >
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy BankInfo API Access Token" />
+                <Button Background="#BFDBF7" Foreground="Black" FontSize="16" Margin="10 0 0 0" x:Name="ShowAccessToken"  Click="CopyAccessToken_Click" Width="120" >
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy Access Token" />
                     </Button>
-                    <Button Background="#E1E5F2" Margin="10 0 0 0" x:Name="ShowBankInfoIDToken" Click="CopyBankInfoAPIIDToken_Click" Width="120" >
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy BankInfo API ID Token" />
+                <Button Background="#E1E5F2" Margin="10 0 0 0" FontSize="16" x:Name="ShowIDToken" Click="CopyIDToken_Click" Width="120" >
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy ID Token" />
                     </Button>
-                    <Button Background="#BFDBF7" Margin="10 0 0 0" x:Name="ShowBankInfoRefreshToken"  Click="CopyBankInfoAPIRefreshToken_Click" Width="120">
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy BankInfo API Refresh Token" />
-                    </Button>
-                </StackPanel>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal"  Margin="0 10 0 0">
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-                    <Label Margin="10 0 0 0" Content="Response from MSGraph token endpoint:" Width="400" HorizontalAlignment="Left"/>
-                    <TextBox Margin="10 0 0 0" x:Name="MSGraphAccessToken" VerticalAlignment="Center" Width="400" TextWrapping="NoWrap"  Text="..." />
-                    <Button x:Name="CopyMSGraphAccessToken" Background="#BFDBF7" Margin="10 0 0 0" Content="Copy whole Response to Clipboard" Click="CopyMSGraphAPIAuthCode_Click"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
-                    <Button Background="#1F7A8C" Foreground="White" Margin="10 0 0 0" x:Name="ShowMSGraphAPIAccessToken"  Click="CopyBankInfoAPIAccessToken_Click" Width="120" >
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy MSGraph Access Token" />
-                    </Button>
-                    <Button Background="#E1E5F2" Margin="10 0 0 0" x:Name="ShowMSGraphAPIIDToken" Click="CopyBankInfoAPIIDToken_Click" Width="120" >
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy MSGraph ID Token" />
-                    </Button>
-                    <Button Background="#BFDBF7" Margin="10 0 0 0" x:Name="ShowMSGraphAPIRefreshToken"  Click="CopyBankInfoAPIRefreshToken_Click" Width="120">
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy MSGraph Refresh Token" />
+                <Button Background="#BFDBF7" Margin="10 0 0 0" FontSize="16" x:Name="ShowRefreshToken"  Click="CopyRefreshToken_Click" Width="120">
+                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy Refresh Token" />
                     </Button>
                 </StackPanel>
             </StackPanel>
-        </StackPanel>
+     
         <Label Margin="0 20 0 0" Content="Finally, let us call the back-end sample API to make sure it validates our token." Background="{x:Null}" Height="32"/>
-        <StackPanel Orientation="Horizontal">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" >
-                <Button x:Name="CallBankAPI" Margin="10 0 0 0"  Width="420" Content="Call BankInfo API with Access Token" Click="CallBankInfoAPI_Click" Background="#FFBFDBF7"/>
-                <TextBox Margin="10 0 0 0" x:Name="BankInfoAPICurrentBalanceResponse" VerticalAlignment="Center" Width="420" Height="100" TextWrapping="NoWrap"  Text="..." />
-                <Button Margin="10 0 0 0" Background="#1F7A8C" Foreground="White" x:Name="RefreshBankInfoAPIToken" Click="CopyBankInfoAPIAuthCode_Click"  Width="420">
-                    <TextBlock TextAlignment="Center" ><Run Text="Get new BankInfo API Tokens with Refresh Token"/></TextBlock>
-                </Button>
-            </StackPanel>
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" >
-                <Button x:Name="CallMSGraphAPI" Margin="10 0 0 0"  Width="420"  Background="#FFBFDBF7" Content="Call MSGraph API with Access Token" Click="CopyMSGraphAPIAuthCode_Click"/>
-                <TextBox Margin="10 0 0 0" x:Name="MSGraphAPIResponse" VerticalAlignment="Center" Width="420" Height="100" TextWrapping="NoWrap"  Text="..." />
-                <Button Margin="10 0 0 0" Background="#1F7A8C" Foreground="White" x:Name="RefreshMSGraphAPIToken" Click="CopyBankInfoAPIAuthCode_Click"  Width="420">
-                    <TextBlock TextAlignment="Center" ><Run Text="Get new MSGraph API Tokens with Refresh Token"/></TextBlock>
-                </Button>
-            </StackPanel>
-            
+        <StackPanel Orientation="Horizontal" Margin="5 5 5 5">
+
+            <Button Background="#1F7A8C" Foreground="White" x:Name="CallAPI" Margin="5 5 5 5" Content="3. Call API" Click="CallAPI_Click" Width="250" Height="35" FontSize="16"/>
+            <TextBox Margin="10 0 0 0" x:Name="APIResponse" VerticalAlignment="Center" Width="350" Height="100" TextWrapping="NoWrap"  Text="..." />
+            <Button Background="#BFDBF7" Margin="10 0 0 0" x:Name="CopyAPIResult"  Click="CopyAPIResult_Click" Width="120">
+                <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy API result" />
+            </Button>
+            <Button Background="#BFDBF7" Margin="10 0 0 0" x:Name="RefreshToken"  Click="RefreshToken_Click" Width="120">
+                <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Refresh Tokens" />
+            </Button>
         </StackPanel>
-       
     </StackPanel>
 </Window>
