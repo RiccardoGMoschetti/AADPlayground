@@ -23,15 +23,15 @@ namespace BankDesktopClient
     {
         //         https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
         static HttpClient httpClient = new();
-        private BrowserOperations currentBrowserOperation;
+        private BrowserOperations currentBrowserOperation = BrowserOperations.LoggingIN;;
         private APITypes CurrentAPI;
         private void RestoreBrowser() => AuthBrowser.NavigateToString("<body style=\"font-family: 'Segoe UI Semilight', Arial, sans-serif\">Ready to authenticate you with Azure AD.</body>");
         private void StartOperationsWithBrowser() => AuthBrowser.NavigateToString("<body style=\"font-family: 'Segoe UI Semilight', Arial, sans-serif\">Navigating to Azure AD.</body>");
         public MainWindow()
         {
+
             InitializeComponent();
             FillAvailableAPICombo();
-            currentBrowserOperation = BrowserOperations.LoggingIN;
             RestoreBrowser();
         }
         private void FillAvailableAPICombo()
@@ -42,7 +42,7 @@ namespace BankDesktopClient
                 AvailableAPIs.Items.Add(new ComboBoxItem { Content = API.Value.CommonName });
             }
         }
-        private bool CheckStartDataIsFilled()
+        private bool IsAppDataFilled()
         {
             if (ClientID.Text?.Length == 0 || TenantID.Text?.Length == 0 || CurrentAPI == APITypes.Null)
             {
@@ -89,7 +89,7 @@ namespace BankDesktopClient
         }
         private void GetAuthorizationCode_Click(object sender, RoutedEventArgs e)
         {
-            if (!CheckStartDataIsFilled()) return;
+            if (!IsAppDataFilled()) return;
             AADConfiguration.TenantID = TenantID.Text;
             AADConfiguration.ClientID = ClientID.Text;
             EmptyAllText();
@@ -101,7 +101,7 @@ namespace BankDesktopClient
         }
         private void CopyAuthorizationCode_Click(object sender, RoutedEventArgs e)
         {
-            if (!CheckStartDataIsFilled()) return;
+            if (!IsAppDataFilled()) return;
             if (AADSecretStore.AADapiAccessData[CurrentAPI].AuthCode == null) MessageBox.Show("Nothing to copy yet", "AAD Playground: Copy Auth Code", MessageBoxButton.OK, MessageBoxImage.Warning);
             else
             {
@@ -111,7 +111,7 @@ namespace BankDesktopClient
         }
         private void CopyCompleteTokenInfo(object sender, RoutedEventArgs e)
         {
-            if (!CheckStartDataIsFilled()) return;
+            if (!IsAppDataFilled()) return;
             if (String.IsNullOrEmpty(TokenResponse.Text)) MessageBox.Show("Nothing to copy yet", "AAD Playground: Copy Response", MessageBoxButton.OK, MessageBoxImage.Warning);
             else
             {
@@ -121,7 +121,7 @@ namespace BankDesktopClient
         }
         private void CopyRefreshToken_Click(object sender, RoutedEventArgs e)
         {
-            if (!CheckStartDataIsFilled()) return;
+            if (!IsAppDataFilled()) return;
             if (AADSecretStore.AADapiAccessData[CurrentAPI].RefreshToken == null) MessageBox.Show("Nothing to copy yet", "AAD Playground: Copy Token", MessageBoxButton.OK, MessageBoxImage.Warning);
             else
             {
@@ -131,7 +131,7 @@ namespace BankDesktopClient
         }
         private void CopyAccessToken_Click(object sender, RoutedEventArgs e)
         {
-            if (!CheckStartDataIsFilled()) return;
+            if (!IsAppDataFilled()) return;
             if (AADSecretStore.AADapiAccessData[CurrentAPI].AccessToken == null) MessageBox.Show("Nothing to copy yet", "AAD Playground: Copy Token", MessageBoxButton.OK, MessageBoxImage.Warning);
             else
             {
@@ -141,7 +141,7 @@ namespace BankDesktopClient
         }
         private void CopyIDToken_Click(object sender, RoutedEventArgs e)
         {
-            if (!CheckStartDataIsFilled()) return;
+            if (!IsAppDataFilled()) return;
             if (AADSecretStore.AADapiAccessData[CurrentAPI].RefreshToken == null) MessageBox.Show("Nothing to copy yet", "AAD Playground: Copy Token", MessageBoxButton.OK, MessageBoxImage.Warning);
             else
             {
@@ -151,7 +151,7 @@ namespace BankDesktopClient
         }
         private async void CallAPI_Click(object sender, RoutedEventArgs e)
         {
-            if (!CheckStartDataIsFilled()) return;
+            if (!IsAppDataFilled()) return;
             httpClient.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", AADSecretStore.AADapiAccessData[CurrentAPI].AccessToken);
             HttpResponseMessage response = new();
@@ -169,10 +169,9 @@ namespace BankDesktopClient
                 MessageBox.Show("Successfully called the API with the Access Token", "AAD: Call API", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
-        private async void GetTokens_Click(object sender, RoutedEventArgs e)
+        private List<KeyValuePair<string, string>> TokenRequestFormData()
         {
-            if (!CheckStartDataIsFilled()) return;
-            var tokenRequestInners = new List<KeyValuePair<string, string>>
+            return new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("client_id", AADConfiguration.ClientID??string.Empty),
                 new KeyValuePair<string, string>("grant_type", "authorization_code"),
@@ -180,13 +179,18 @@ namespace BankDesktopClient
                 new KeyValuePair<string, string>("code", AADSecretStore.AADapiAccessData[CurrentAPI].AuthCode??string.Empty),
                 new KeyValuePair<string, string>("redirect_uri", AADConfiguration.AADReturnURL),
             };
-            var formContent = new FormUrlEncodedContent(tokenRequestInners);
+        }
+       private async void GetTokens_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsAppDataFilled()) return;
+            List<KeyValuePair<string, string>> tokenRequestInners = TokenRequestFormData();
+            FormUrlEncodedContent formContent = new FormUrlEncodedContent(tokenRequestInners);
             HttpResponseMessage response = new();
             response = await httpClient.PostAsync(AADConfiguration.APIEndpoints[CurrentAPI].TokenRequestURL, formContent);
-            var tokenAPIResponse = await response.Content.ReadAsStringAsync();
+            string tokenAPIResponse = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
-                var errorSegue = MessageBox.Show(string.Format("Sorry, AAD returned an error:{0}{1}{0}with these details:{0}{2}{0}{0}Do you want to copy the error to the clipboard?", Environment.NewLine, response.ReasonPhrase, tokenAPIResponse), "AAD Playground: Error", MessageBoxButton.YesNo, MessageBoxImage.Stop);
+                MessageBoxResult errorSegue = MessageBox.Show(string.Format("Sorry, AAD returned an error:{0}{1}{0}with these details:{0}{2}{0}{0}Do you want to copy the error to the clipboard?", Environment.NewLine, response.ReasonPhrase, tokenAPIResponse), "AAD Playground: Error", MessageBoxButton.YesNo, MessageBoxImage.Stop);
                 if (errorSegue == MessageBoxResult.Yes)
                     Clipboard.SetText(tokenAPIResponse);
                 return;
@@ -204,7 +208,7 @@ namespace BankDesktopClient
         }
         private void CopyAPIResult_Click(object sender, RoutedEventArgs e)
         {
-            if (!CheckStartDataIsFilled()) return;
+            if (!IsAppDataFilled()) return;
             if (string.IsNullOrEmpty(APIResponse.Text)) MessageBox.Show("Nothing to copy yet", "AAD Playground: Copy API Response", MessageBoxButton.OK, MessageBoxImage.Warning);
             else
             {
@@ -214,15 +218,8 @@ namespace BankDesktopClient
         }
         private async void RefreshToken_Click(object sender, RoutedEventArgs e)
         {
-            if (!CheckStartDataIsFilled()) return;
-            var tokenRequestInners = new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>("client_id", AADConfiguration.ClientID??string.Empty),
-                new KeyValuePair<string, string>("grant_type", "refresh_token"),
-                new KeyValuePair<string, string>("scope", AADConfiguration.APIEndpoints[CurrentAPI].Scope??string.Empty+"offline"),
-                new KeyValuePair<string, string>("refresh_token", AADSecretStore.AADapiAccessData[CurrentAPI].RefreshToken??string.Empty),
-                new KeyValuePair<string, string>("redirect_uri", AADConfiguration.AADReturnURL),
-            };
+            if (!IsAppDataFilled()) return;
+            List<KeyValuePair<string, string>> tokenRequestInners = RefreshTokenFormData();
             var formContent = new FormUrlEncodedContent(tokenRequestInners);
             HttpResponseMessage response = new();
             response = await httpClient.PostAsync(AADConfiguration.APIEndpoints[CurrentAPI].TokenRequestURL, formContent);
@@ -244,6 +241,17 @@ namespace BankDesktopClient
                 AuthCode.UpdateLayout();
                 MessageBox.Show("Successfully retrieved a new Access Token and a new Refresh Token for the API", "AAD: Refresh Token", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+        }
+        private List<KeyValuePair<string, string>> RefreshTokenFormData()
+        {
+            return new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("client_id", AADConfiguration.ClientID??string.Empty),
+                new KeyValuePair<string, string>("grant_type", "refresh_token"),
+                new KeyValuePair<string, string>("scope", AADConfiguration.APIEndpoints[CurrentAPI].Scope??string.Empty+"offline"),
+                new KeyValuePair<string, string>("refresh_token", AADSecretStore.AADapiAccessData[CurrentAPI].RefreshToken??string.Empty),
+                new KeyValuePair<string, string>("redirect_uri", AADConfiguration.AADReturnURL),
+            };
         }
         private void AvailableAPIs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
