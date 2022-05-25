@@ -6,67 +6,64 @@
         xmlns:local="clr-namespace:BankDesktopClient" BorderBrush="Beige" 
         mc:Ignorable="d"
         FontSize="12"
-        Title="Azure Active Directory Authentication Samples" Height="900" Width="1024" Background="#022B3A" FontFamily="Segoe UI Semilight" >
+        Title="Azure Active Directory Authentication Samples" Height="650" Width="1034" Background="#282F24" FontFamily="Segoe UI Semilight" >
     <Window.Resources>
         <Style TargetType="{x:Type Label}">
             <Setter Property="Control.Foreground" Value="White"/>
         </Style>
     </Window.Resources>
-
-
-    <StackPanel Orientation="Vertical" Margin="0,0,0,0">
-        <Label FontFamily="Segoe UI Semibold" Content="Sample Desktop Client For AAD-protected APIs" HorizontalAlignment="Center" FontSize="18" VerticalAlignment="Center"/>
-        <StackPanel Orientation="Horizontal"  Margin="5 5 5 5">
-            <Label Content="Tenant ID" FontSize="16" Width="100" />
-            <TextBox x:Name="TenantID" Width="350" Margin="0 0 100 0" Text="e0aeaef9-9bf6-4b6d-bebb-25ee10f820af" FontSize="16"/>
-            <Label Content="Client ID" FontSize="16" Width="100" />
-            <TextBox x:Name="ClientID" Width="350" Text="bc7a21b8-d4d8-449e-bcad-c740e843fa49" FontSize="16"   />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal"  Margin="5 5 5 5">
-
-            <Label x:Name="label" Content="Choose API" FontSize="16" Width="100" />
-            <ComboBox x:Name="AvailableAPIs" Width="350" FontSize="16" SelectionChanged="AvailableAPIs_SelectionChanged" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="5 5 5 5" HorizontalAlignment="Stretch">
-            <Button Background="#1F7A8C" Foreground="White" x:Name="GetAuthCode" Margin="5 5 5 5" Content="1. Get Authorization Code" Click="GetAuthorizationCode_Click" Width="250" Height="35" FontSize="16"/>
-            <WebBrowser Height="200" Width="350" x:Name="AuthBrowser" LoadCompleted ="AuthBrowser_Navigated" Margin="10,0,0,10" />
-            <StackPanel x:Name="AuthCodeResponse" Orientation="Vertical" Width="390" >
-                <Label Margin="10,0,10,0" Content="Authorization Code Response:"  Width="326" Height="25" HorizontalAlignment="Right"/>
-                <TextBox Margin="10,0,10,10" x:Name="AuthCode" Width="326" TextWrapping="NoWrap"  Text="..." Height="50"  HorizontalAlignment="Right" />
-                <Button Margin="10,0,10,10" Background="#E1E5F2" Foreground="Black" x:Name="CopyAuthCode"  Content="Copy" Click="CopyAuthorizationCode_Click" Width="326" Height="25" HorizontalAlignment="Right" />
-                <Button Margin="10,0,10,10" Background="#BFDBF7" Foreground="Black" x:Name="LogOut" Content="Log Out" Click="LogOut_Click" Width="326" Height="25" HorizontalAlignment="Right"/>
+    <StackPanel Orientation="Vertical" Margin="0,0,0,0"  >
+        <Label Margin="0 5 0 5" FontFamily="Segoe UI Semibold" Content="Desktop Client For APIs protected by Azure AD" HorizontalContentAlignment="Center"  FontSize="20" VerticalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal" Background="#3E4938" Margin="5 5 5 5" HorizontalAlignment="Stretch" >
+            <StackPanel Orientation="Horizontal"  Margin="5 5 5 5"  Background="#21291D" >
+                <Label x:Name="label" Content="Choose API" Foreground="White" FontSize="14" VerticalAlignment="Center" />
+                <ComboBox x:Name="AvailableAPIs" Width="250" FontSize="14" VerticalAlignment="Center" SelectionChanged="AvailableAPIs_SelectionChanged" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5 5 5 5" Background="#21291D"  >
+                <Label Content="Tenant ID" FontSize="14" />
+                <TextBox x:Name="TenantID"  Margin="0 0 0 0" Text="00000000-0000-0000-0000-000000000000" FontSize="14"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5 5 5 5" Background="#21291D" >
+                <Label Content="Client ID" FontSize="14"  />
+                <TextBox x:Name="ClientID"  Text="00000000-0000-0000-0000-000000000000" FontSize="14"/>
             </StackPanel>
         </StackPanel>
-
-        <StackPanel Orientation="Horizontal" Margin="5 5 5 5" >
-                <Button Background="#1F7A8C" Foreground="White" x:Name="GetTokens" Margin="5 5 5 5" Content="2. Get Access and Refresh Tokens" Click="GetTokens_Click" Width="250" Height="35" FontSize="16"/>
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Height="100"  >
-                   <TextBox Margin="10 0 0 0" x:Name="TokenResponse" VerticalAlignment="Center" Width="350" Height="100" TextWrapping="NoWrap"  Text="" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
-                <Button Background="#BFDBF7" Foreground="Black" FontSize="16" Margin="10 0 0 0" x:Name="ShowAccessToken"  Click="CopyAccessToken_Click" Width="120" >
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy Access Token" />
-                    </Button>
-                <Button Background="#E1E5F2" Margin="10 0 0 0" FontSize="16" x:Name="ShowIDToken" Click="CopyIDToken_Click" Width="120" >
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy ID Token" />
-                    </Button>
-                <Button Background="#BFDBF7" Margin="10 0 0 0" FontSize="16" x:Name="ShowRefreshToken"  Click="CopyRefreshToken_Click" Width="120">
-                        <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy Refresh Token" />
-                    </Button>
-                </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5,0,5,5" HorizontalAlignment="Stretch"   Background="#3E4938">
+            <Button Background="#21291D" Foreground="White" x:Name="GetAuthCode" Margin="5 5 5 10" Content="Get Authorization Code [1]" Click="GetAuthorizationCode_Click" Width="250" Height="50" FontSize="16"/>
+            <WebBrowser Height="200" Width="350" x:Name="AuthBrowser" LoadCompleted ="AuthBrowser_LoadCompleted" Margin="10 5 5 5" />
+            <StackPanel x:Name="AuthCodeResponse" Orientation="Vertical" Width="350" >
+                <Label Margin="10,0,0,10" Content="Authorization Code Response:" FontSize="14"  Width="350" />
+                <TextBox Margin="10,0,0,10" x:Name="AuthCode" Width="340" TextWrapping="Wrap" FontSize="14"  Height="100"   />
+                <Button Margin="10,0,0,10" Background="#21291D" Foreground="White" x:Name="CopyAuthCode"  Content="Copy" Click="CopyAuthorizationCode_Click" Width="340" Height="25"  />
+                <Button Margin="10,0,0,5" Background="#21291D" Foreground="White" x:Name="LogOut" Content="Log Out" Click="LogOut_Click" Width="340" Height="25" />
             </StackPanel>
-     
-        <Label Margin="0 20 0 0" Content="Finally, let us call the back-end sample API to make sure it validates our token." Background="{x:Null}" Height="32"/>
-        <StackPanel Orientation="Horizontal" Margin="5 5 5 5">
-
-            <Button Background="#1F7A8C" Foreground="White" x:Name="CallAPI" Margin="5 5 5 5" Content="3. Call API" Click="CallAPI_Click" Width="250" Height="35" FontSize="16"/>
-            <TextBox Margin="10 0 0 0" x:Name="APIResponse" VerticalAlignment="Center" Width="350" Height="100" TextWrapping="NoWrap"  Text="..." />
-            <Button Background="#BFDBF7" Margin="10 0 0 0" x:Name="CopyAPIResult"  Click="CopyAPIResult_Click" Width="120">
-                <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy API result" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5 0 5 0" Background="#3E4938" HorizontalAlignment="Stretch" >
+            <Button Background="#21291D" Foreground="White"  x:Name="GetTokens" Margin="5 0 5 0" Content="Get Access + Refresh Tokens [2]" Click="GetTokens_Click" Width="250" Height="50" FontSize="16"/>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Height="100" Margin="10 0 0 0" >
+                <TextBox  x:Name="TokenResponse" VerticalAlignment="Center" Width="350" Height="100"  FontSize="16"  Text=""  TextWrapping="Wrap"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="5,10,0,10" >
+                <Button Background="#21291D" Foreground="White" FontSize="12" Margin="10 0 10 10"  VerticalAlignment="Center" Height="25" x:Name="ShowAccessToken"  Click="CopyAccessToken_Click" Width="340" >
+                    <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy Access Token" />
+                </Button>
+                <Button Background="#21291D" Foreground="White" Margin="10 0 10 10" FontSize="12" x:Name="ShowIDToken" VerticalAlignment="Center" Height="25" Click="CopyIDToken_Click" Width="340" >
+                    <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy ID Token" />
+                </Button>
+                <Button Background="#21291D" Foreground="White" Margin="10 0 10 0" FontSize="12" x:Name="ShowRefreshToken"  Click="CopyRefreshToken_Click" Width="340" VerticalAlignment="Center" Height="25">
+                    <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy Refresh Token" />
+                </Button>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5 5 5 5" Background="#3E4938">
+            <Button Background="#21291D" Foreground="White" x:Name="CallAPI" Margin="5 5 5 5" Content="Call API [3]" Click="CallAPI_Click" Width="250" Height="50" FontSize="16"/>
+            <TextBox Margin="10 5 0 5" x:Name="APIResponse" VerticalAlignment="Center" Width="350" Height="100" TextWrapping="NoWrap" FontSize="16" />
+            <Button Background="#21291D" Margin="15 0 10 10" x:Name="CopyAPIResult"  Click="CopyAPIResult_Click" Width="340" Height="25">
+                <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Copy API Result" FontSize="12" Foreground="White"/>
             </Button>
-            <Button Background="#BFDBF7" Margin="10 0 0 0" x:Name="RefreshToken"  Click="RefreshToken_Click" Width="120">
-                <TextBlock TextAlignment="Center" TextWrapping="Wrap" Text="Refresh Tokens" />
-            </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5 0 5 5" Background="#3E4938">
+            <Button Background="#21291D" Foreground="White" x:Name="RefreshToken" Margin="5 5 5 5" Content="Refresh Token [4]" Click="RefreshToken_Click" Width="250" Height="50" FontSize="16"/>
         </StackPanel>
     </StackPanel>
 </Window>

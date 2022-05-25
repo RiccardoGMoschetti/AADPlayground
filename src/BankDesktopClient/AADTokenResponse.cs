@@ -15,6 +15,5 @@ namespace BankDesktopClient
         public string? access_token { get; set; }
         public string? refresh_token { get; set; }
         public string? id_token { get; set; }
-
     }
 }
