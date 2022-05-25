@@ -54,6 +54,7 @@ namespace BankDesktopClient
         // nonce!
         private async void AuthBrowser_LoadCompleted(object sender, NavigationEventArgs e)
         {
+            this.Cursor = Cursors.Arrow;
             string URLfromNavigation = e?.Uri?.OriginalString ?? string.Empty;
             string URLquery = e?.Uri?.Query ?? string.Empty;
             if (string.IsNullOrEmpty(URLfromNavigation)) { return; }
@@ -62,7 +63,6 @@ namespace BankDesktopClient
                 this.Cursor = Cursors.Arrow;
                 string error = HttpUtility.ParseQueryString(URLquery)?.Get("error") ?? string.Empty;
                 string errorDescripition = HttpUtility.ParseQueryString(URLquery)?.Get("error_description") ?? string.Empty;
-
                 if (string.IsNullOrEmpty(error))
                 {
                     string authCode = HttpUtility.ParseQueryString(URLquery)?.Get("code") ?? string.Empty;
@@ -166,9 +166,7 @@ namespace BankDesktopClient
             {
                 APIResponse.Text = content;
                 APIResponse.UpdateLayout();
-
                 MessageBox.Show("Successfully called the API with the Access Token", "AAD: Call API", MessageBoxButton.OK, MessageBoxImage.Information);
-
             }
         }
         private async void GetTokens_Click(object sender, RoutedEventArgs e)
@@ -256,8 +254,8 @@ namespace BankDesktopClient
         }
         private void EmptyAllText()
         {
-            AuthCode.Text = String.Empty;
-            TokenResponse.Text = String.Empty;
+            AuthCode.Text = string.Empty;
+            TokenResponse.Text = string.Empty;
             APIResponse.Text = String.Empty;
         }
     }
