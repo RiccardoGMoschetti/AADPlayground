@@ -23,13 +23,12 @@ namespace BankDesktopClient
     {
         //         https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
         static HttpClient httpClient = new();
-        private BrowserOperations currentBrowserOperation = BrowserOperations.LoggingIN;;
+        private BrowserOperations currentBrowserOperation = BrowserOperations.LoggingIN;
         private APITypes CurrentAPI;
         private void RestoreBrowser() => AuthBrowser.NavigateToString("<body style=\"font-family: 'Segoe UI Semilight', Arial, sans-serif\">Ready to authenticate you with Azure AD.</body>");
         private void StartOperationsWithBrowser() => AuthBrowser.NavigateToString("<body style=\"font-family: 'Segoe UI Semilight', Arial, sans-serif\">Navigating to Azure AD.</body>");
         public MainWindow()
         {
-
             InitializeComponent();
             FillAvailableAPICombo();
             RestoreBrowser();
@@ -264,7 +263,7 @@ namespace BankDesktopClient
         {
             AuthCode.Text = string.Empty;
             TokenResponse.Text = string.Empty;
-            APIResponse.Text = String.Empty;
+            APIResponse.Text = string.Empty;
         }
     }
 }
