@@ -13,7 +13,7 @@ using System.Text.Json;
 using System.Net.Http.Headers;
 using System.Linq;
 
-namespace BankDesktopClient
+namespace WindowsDesktopClient
 {
     internal enum BrowserOperations
     {
