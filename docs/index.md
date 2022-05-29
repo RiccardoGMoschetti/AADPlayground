@@ -4,7 +4,7 @@ These pages are meant to guide a developer to simply set up authentication for t
 
 ## Azure Active Directory
 Jump right in to see:
-- how to set up a Windows desktop client that will consume APIs (both by Microsoft and your own). [Here!](./WindowsDesktopClientforAzureActiveDirectory.md)
+- how to set up a Windows desktop client that will consume APIs (both by Microsoft and your own). [Here!](WindowsDesktopClientForAzureActiveDirectory.md)
 - how to set up a Web application that will consumer AAD-protected APIs (both by Microsoft and, aagin, your own)
 
 You can use the [editor on GitHub](https://github.com/RiccardoGMoschetti/AADPlayground/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
