@@ -1,4 +1,4 @@
-# Create a new Application in Azure AD (OAuth Authorization Flow)
+# Creating a new Application in Azure AD
 
 To be able to consume APIs protected by Azure AD, first you have to register an Application in Azure AD.  
 Then, you will then grant this Application the possibility to access specific APIs (Microsoft's and/or created by you).  
