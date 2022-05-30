@@ -1,6 +1,6 @@
 # Welcome to authentico.dev
 
-These pages are meant to guide a developer to simply set up authentication for their client and server applications.
+These pages want to be a guide for developers who wish to learn how to simply set up authentication for their client and server applications. None of the samples use SDKs/libraries like ADAL or MSAL. In this way, you can learn how the flows are engineered.
 
 ## Azure Active Directory
 Jump right in to see:
